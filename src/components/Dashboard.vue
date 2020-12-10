@@ -99,8 +99,8 @@
 
     <!--Mean airtime in origins-->
     <pieChart chart-title="Mean airtime in origin"
-              :labels="airtime.map(e=>e.origin)"
-              :series="airtime.map(e=>e.airtime)">
+              :labels="this.airtime.map(e=>e.origin)"
+              :series="this.airtime.map(e=>e.airtime)">
     </pieChart>
 
     <!--Mean delays from origin stacked-->
@@ -120,12 +120,67 @@
     <h1>Weather</h1>
     <!--Number of weather records in origins-->
     <pieChart chart-title="Weather records for each origin"
-              :labels="weatherRecords.map(e=>e.origin)"
-              :series="weatherRecords.map(e=>e.observation_count)">
+              :labels="this.weatherRecords.map(e=>e.origin)"
+              :series="this.weatherRecords.map(e=>e.observation_count)">
     </pieChart>
 
+    <!--Mean temperature in origins-->
+    <date-time-line-chart
+        chart-title="Mean temperature in origins"
+        :categories="this.days"
+        :series="[{name: 'EWR',data: this.meanTemp.ewr},
+          {name: 'JFK',data: this.meanTemp.jfk},
+          {name: 'LGA',data: this.meanTemp.lga}
+                  ]"
+    ></date-time-line-chart>
 
+    <!--Mean temperature in origins-->
+    <date-time-line-chart
+        chart-title="Mean temperature at JFK"
+        type="line"
+        :categories="this.days"
+        :series="[{name: 'JFK',data: meanTemp.jfk},]"
+    ></date-time-line-chart>
 
+    <!--Temperature attributes in origins-->
+    <div class="chart-wrapper">
+      <apexchart class="graph" :options=" {
+                chart: { type: 'scatter' },
+                title: {
+                  text: 'Temperature attributes in origins',
+                   style: style,
+                  align: 'center' },
+                xaxis: {
+                  type: 'datetime',
+                  labels: {
+                format: 'MMM yyyy'}}
+              }"
+                 :series="[{name: 'dew point', data: temperatureAtJfk.dew},
+               {name: 'temperature', data: temperatureAtJfk.temp},
+
+               ]"></apexchart>
+    </div>
+
+    <!--Temperature attributes at JFK-->
+    <div class="chart-wrapper">
+      <apexchart class="graph" :options=" {
+                chart: { type: 'scatter' },
+                title: {
+                  text: 'Temperature attributes at JFK',
+                   style: style,
+                  align: 'center' },
+                xaxis: {
+                  type: 'datetime',
+                  labels: {
+                format: 'MMM yyyy'}}
+              }"
+                 :series="[{name: 'JFK temperature',data: this.temperature.jfk.temp},
+          {name: 'JFK dew point',data: this.temperature.jfk.dew},
+          {name: 'EWR temperature',data: this.temperature.ewr.temp},
+          {name: 'EWR dew point',data: this.temperature.ewr.dew},
+          {name: 'LGA temperature',data: this.temperature.lga.temp},
+          {name: 'LGA dew point',data: this.temperature.lga.dew},]"></apexchart>
+    </div>
     <h1>Planes</h1>
 
   </div>
@@ -136,6 +191,7 @@ import {mapGetters} from 'vuex';
 import lineChart from './LineChart.vue';
 import barChart from './BarChart.vue';
 import pieChart from './PieChart.vue';
+import dateTimeLineChart from './DatetimeLineChart.vue';
 
 export default {
   name: 'Dashboard',
@@ -152,11 +208,18 @@ export default {
   },
   data() {
     return {
-      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      style: {
+        fontSize: '15px',
+        color: '#4b4d54',
+        floating: true,
+        fontWeight: 400,
+        fontFamily: 'Helvetica',
+      },
     }
   },
   components: {
-    lineChart, barChart, pieChart
+    lineChart, barChart, pieChart, dateTimeLineChart
   },
   methods: {
     flattenArray(array) {
@@ -178,6 +241,9 @@ export default {
       'weatherRecords',
       'meanTemp',
       'meanTempJfk',
+      'days',
+
+
     ]),
   },
 
