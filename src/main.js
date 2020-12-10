@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { store } from './store/store'
+import store from "./store/store.js";
 import VueApexCharts from 'vue-apexcharts'
 
 Vue.component('apexchart', VueApexCharts)
