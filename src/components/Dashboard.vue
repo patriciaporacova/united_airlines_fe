@@ -137,51 +137,79 @@
     <!--Mean temperature in origins-->
     <date-time-line-chart
         chart-title="Mean temperature at JFK"
-        type="line"
         :categories="this.days"
         :series="[{name: 'JFK',data: meanTemp.jfk},]"
     ></date-time-line-chart>
 
     <!--Temperature attributes in origins-->
-    <div class="chart-wrapper">
-      <apexchart class="graph" :options=" {
-                chart: { type: 'scatter' },
-                title: {
-                  text: 'Temperature attributes in origins',
-                   style: style,
-                  align: 'center' },
-                xaxis: {
-                  type: 'datetime',
-                  labels: {
-                format: 'MMM yyyy'}}
-              }"
-                 :series="[{name: 'dew point', data: temperatureAtJfk.dew},
-               {name: 'temperature', data: temperatureAtJfk.temp},
+    <!-- <div class="chart-wrapper">
+       <apexchart class="graph" :options=" {
+                 chart: { type: 'scatter' },
+                 title: {
+                   text: 'Temperature attributes in origins',
+                    style: style,
+                   align: 'center' },
+                 xaxis: {
+                   type: 'datetime',
+                   labels: {
+                 format: 'MMM yyyy'}}
+               }"
+                  :series="[{name: 'dew point', data: temperatureAtJfk.dew},
+                {name: 'temperature', data: temperatureAtJfk.temp},
 
-               ]"></apexchart>
-    </div>
+                ]"></apexchart>
+     </div>
 
-    <!--Temperature attributes at JFK-->
-    <div class="chart-wrapper">
-      <apexchart class="graph" :options=" {
-                chart: { type: 'scatter' },
-                title: {
-                  text: 'Temperature attributes at JFK',
-                   style: style,
-                  align: 'center' },
-                xaxis: {
-                  type: 'datetime',
-                  labels: {
-                format: 'MMM yyyy'}}
-              }"
-                 :series="[{name: 'JFK temperature',data: this.temperature.jfk.temp},
-          {name: 'JFK dew point',data: this.temperature.jfk.dew},
-          {name: 'EWR temperature',data: this.temperature.ewr.temp},
-          {name: 'EWR dew point',data: this.temperature.ewr.dew},
-          {name: 'LGA temperature',data: this.temperature.lga.temp},
-          {name: 'LGA dew point',data: this.temperature.lga.dew},]"></apexchart>
-    </div>
+     &lt;!&ndash;Temperature attributes at JFK&ndash;&gt;
+     <div class="chart-wrapper">
+       <apexchart class="graph" :options=" {
+                 chart: { type: 'scatter' },
+                 title: {
+                   text: 'Temperature attributes at JFK',
+                    style: style,
+                   align: 'center' },
+                 xaxis: {
+                   type: 'datetime',
+                   labels: {
+                 format: 'MMM yyyy'}}
+               }"
+                  :series="[{name: 'JFK temperature',data: this.temperature.jfk.temp},
+           {name: 'JFK dew point',data: this.temperature.jfk.dew},
+           {name: 'EWR temperature',data: this.temperature.ewr.temp},
+           {name: 'EWR dew point',data: this.temperature.ewr.dew},
+           {name: 'LGA temperature',data: this.temperature.lga.temp},
+           {name: 'LGA dew point',data: this.temperature.lga.dew},]"></apexchart>
+     </div>-->
+
     <h1>Planes</h1>
+
+    <barChart chart-title="Manufacturers with more than 200 planes"
+              :bar-options="{ horizontal: false,
+                              columnWidth: '65%',
+                              }"
+              :categories="this.manufacturers.map(e=>e.manufacturer)"
+              :series="[{
+            name: 'Number of planes',
+            data: this.manufacturers.map(e=>e['No of planes'])
+          }]"></barChart>
+
+    <barChart chart-title="Flights manufacturers are responsible for"
+              :bar-options="{ horizontal: true,
+                              columnWidth: '65%',
+                              }"
+              :categories="this.manufacturersFlights.map(e=>e.Manufacturer)"
+              :series="[{
+            name: 'Number of flights',
+            data:this.manufacturersFlights.map(e=>e['No of flights responsible for'])
+          }]"></barChart>
+
+      <barChart chart-title="Models"
+                :bar-options="{ horizontal: true,
+                                 columnWidth: '65%',
+                                 }"
+                :categories="['Airbus', 'Airbus Industrie']"
+                :stacked=true
+                :series="this.groupedModels"></barChart>
 
   </div>
 </template>
@@ -205,6 +233,10 @@ export default {
     this.$store.dispatch('fetchTemp');
     this.$store.dispatch('fetchWeatherRecords');
     this.$store.dispatch('fetchMeanTemperature');
+
+    this.$store.dispatch('fetchManufacturers');
+    this.$store.dispatch('fetchManufacturersFlights');
+    this.$store.dispatch('fetchModels');
   },
   data() {
     return {
@@ -243,7 +275,10 @@ export default {
       'meanTempJfk',
       'days',
 
-
+      'manufacturers',
+      'models',
+      'manufacturersFlights',
+      'groupedModels'
     ]),
   },
 
@@ -253,6 +288,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+
+h1 {
+  width: 100%;
+  text-align: center;
+}
+
 .dashboard {
   display: flex;
   flex-wrap: wrap;
