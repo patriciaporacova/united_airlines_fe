@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard">
 
+    <h1>Flights</h1>
     <!--Total flights for each month-->
     <lineChart chart-title="Total flights per month"
                :categories=this.months
@@ -115,6 +116,17 @@
             name: 'Arrivals',
             data: this.delays.arr
           }]"></barChart>
+
+    <h1>Weather</h1>
+    <!--Number of weather records in origins-->
+    <pieChart chart-title="Weather records for each origin"
+              :labels="weatherRecords.map(e=>e.origin)"
+              :series="weatherRecords.map(e=>e.observation_count)">
+    </pieChart>
+
+
+
+    <h1>Planes</h1>
 
   </div>
 </template>
