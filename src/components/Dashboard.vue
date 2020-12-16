@@ -4,9 +4,8 @@
     <h1>Flights</h1>
     <!--Total flights for each month-->
     <lineChart chart-title="Total flights per month"
-               :categories=this.months
                :series="[{
-            name: 'Likes',
+            name: 'Flights',
             data: this.flights
           }]">
     </lineChart>
@@ -18,6 +17,7 @@
                               endingShape: 'rounded'}"
               :categories="this.topTenDestinations.map(e => e.destination)"
               :series="[{
+                name: 'Flights',
            data: this.topTenDestinations.map(e => e.totalFlights)
           }]"></barChart>
 
@@ -39,11 +39,10 @@
           }]"></barChart>
 
     <!--Total flights from origins-->
-    <barChart chart-title="Flights from origins"
+    <dateTimeBarChart chart-title="Flights from origins"
               :bar-options="{ horizontal: false,
                               columnWidth: '65%',
                               endingShape: 'rounded'}"
-              :categories=this.months
               :series="[{
             name: 'EWR',
             data: this.originFlights.ewr
@@ -53,15 +52,14 @@
           },{
             name: 'LGA',
             data: this.originFlights.lga
-          }]"></barChart>
+          }]"></dateTimeBarChart>
 
     <!--Total flights from origin stacked-->
-    <barChart chart-title="Flights from origins stacked"
+    <dateTimeBarChart chart-title="Flights from origins stacked"
               :stacked=true
               :bar-options="{ horizontal: false,
                               columnWidth: '65%',
                               }"
-              :categories=this.months
               :series="[{
             name: 'EWR',
             data: this.originFlights.ewr
@@ -71,10 +69,10 @@
           },{
             name: 'LGA',
             data: this.originFlights.lga
-          }]"></barChart>
+          }]"></dateTimeBarChart>
 
     <!--Total flights from origins in percentage-->
-    <barChart chart-title="Flights from origins in %"
+    <dateTimeBarChart chart-title="Flights from origins in %"
               :stacked=true
               stack-type="100%"
               :dataLabelsVisibility=true
@@ -85,7 +83,6 @@
                                   position: 'center' // bottom/center/top
                                  }
                               }"
-              :categories=this.months
               :series="[{
              name: 'EWR',
             data: this.originFlights.ewr.map((el, inx)=> (el*100/flights[inx]).toFixed(2))
@@ -95,7 +92,7 @@
           },{
             name: 'LGA',
             data: this.originFlights.lga.map((el, inx)=> (el*100/flights[inx]).toFixed(2))
-          }]"></barChart>
+          }]"></dateTimeBarChart>
 
     <!--Mean airtime in origins-->
     <pieChart chart-title="Mean airtime in origin"
@@ -126,8 +123,7 @@
 
     <!--Mean temperature in origins-->
     <date-time-line-chart
-        chart-title="Mean temperature in origins"
-        :categories="this.days"
+        chart-title="Mean temperature in origins in C°"
         :series="[{name: 'EWR',data: this.meanTemp.ewr},
           {name: 'JFK',data: this.meanTemp.jfk},
           {name: 'LGA',data: this.meanTemp.lga}
@@ -136,17 +132,17 @@
 
     <!--Mean temperature in origins-->
     <date-time-line-chart
-        chart-title="Mean temperature at JFK"
-        :categories="this.days"
+        chart-title="Mean temperature at JFK in C°"
         :series="[{name: 'JFK',data: meanTemp.jfk},]"
     ></date-time-line-chart>
 
+
     <!--Temperature attributes in origins-->
-    <!-- <div class="chart-wrapper">
+     <div class="chart-wrapper">
        <apexchart class="graph" :options=" {
                  chart: { type: 'scatter' },
                  title: {
-                   text: 'Temperature attributes in origins',
+                   text: 'Temperature attributes in origins in C°',
                     style: style,
                    align: 'center' },
                  xaxis: {
@@ -160,12 +156,12 @@
                 ]"></apexchart>
      </div>
 
-     &lt;!&ndash;Temperature attributes at JFK&ndash;&gt;
+     <!--Temperature attributes at JFK-->
      <div class="chart-wrapper">
        <apexchart class="graph" :options=" {
                  chart: { type: 'scatter' },
                  title: {
-                   text: 'Temperature attributes at JFK',
+                   text: 'Temperature attributes at JFK in C°',
                     style: style,
                    align: 'center' },
                  xaxis: {
@@ -179,7 +175,7 @@
            {name: 'EWR dew point',data: this.temperature.ewr.dew},
            {name: 'LGA temperature',data: this.temperature.lga.temp},
            {name: 'LGA dew point',data: this.temperature.lga.dew},]"></apexchart>
-     </div>-->
+     </div>
 
     <h1>Planes</h1>
 
@@ -220,6 +216,7 @@ import lineChart from './LineChart.vue';
 import barChart from './BarChart.vue';
 import pieChart from './PieChart.vue';
 import dateTimeLineChart from './DatetimeLineChart.vue';
+import dateTimeBarChart from './BarChartDateTime.vue';
 
 export default {
   name: 'Dashboard',
@@ -240,7 +237,7 @@ export default {
   },
   data() {
     return {
-      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+     // months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       style: {
         fontSize: '15px',
         color: '#4b4d54',
@@ -251,7 +248,7 @@ export default {
     }
   },
   components: {
-    lineChart, barChart, pieChart, dateTimeLineChart
+    lineChart, barChart, pieChart, dateTimeLineChart, dateTimeBarChart
   },
   methods: {
     flattenArray(array) {
@@ -273,7 +270,6 @@ export default {
       'weatherRecords',
       'meanTemp',
       'meanTempJfk',
-      'days',
 
       'manufacturers',
       'models',
@@ -288,6 +284,43 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+
+@media only screen and (max-width: 600px) {
+  .chart-wrapper {
+    width: 95%;
+  }
+}
+
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .chart-wrapper {
+    width: 95%;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .chart-wrapper {
+    width: 95%;
+  }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .chart-wrapper {
+    width: 45%;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1290px) {
+  .chart-wrapper {
+    width: 45%;
+  }
+}
+
+
 
 h1 {
   width: 100%;
@@ -304,7 +337,6 @@ h1 {
   box-shadow: 0 4px 10px 2px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   padding: 0.5em;
-  width: 45%;
   margin: 0.5em;
 }
 </style>
